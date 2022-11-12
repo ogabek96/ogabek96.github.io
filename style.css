@@ -1,0 +1,29 @@
+html,
+body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden
+}
+
+.content {
+    max-width: 500px;
+    margin: auto;
+}
+
+.row-green {
+    margin: auto;
+    border: 3px solid green;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    background-color: #20a117;
+}
+
+.row-red {
+    margin: auto;
+    border: 3px solid rgb(47, 3, 3);
+    padding: 10px;
+    color: white;
+    text-align: center;
+    background-color: #cc2222;
+}
