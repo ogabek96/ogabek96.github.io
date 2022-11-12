@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>PurpleAir</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="content">
+            <div class="row-green">
+                Sensor name: {{ name }} </br>
+            </div>
+            <div class="row-green">
+                Last seen: {{ lastSeen }} </br>
+            </div>
+
+            <div class="row-green"> PM2.5: {{ pm25 }} </div>
+            <div class="row-red">
+                Temperature: {{ (temperature - 32) / 1.8 }} ℃</br>
+            </div>
+            <div class="row-green">
+                Pressure: {{ pressure }} </br>
+            </div>
+            <div class="row-green">
+                Humidity: {{ humidity }} </br>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="module">
+
+    import { createApp } from 'vue'
+
+    createApp({
+        data() {
+            return {
+                name: 'Sensor name',
+                lastSeen: 0,
+                pm25: 0,
+                temperature: 0,
+                pressure: 0,
+                humidity: 0,
+
+            }
+        },
+        async created() {
+            this.fetchData()
+            setInterval(this.fetchData, 2 * 60 * 1000)
+        },
+        methods: {
+            async fetchData() {
+                try {
+                    let uri = window.location.search.substring(1); 
+                    let params = new URLSearchParams(uri);
+                    const res = await axios.get('https://api.purpleair.com/v1/sensors/166735', { headers: { "X-API-Key": params.get("api_key")} })
+                    console.log(res.data.sensor)
+                    this.assignData(res.data.sensor)
+                } catch (e) {
+                    console.error(e)
+                }
+            },
+            assignData(data) {
+                this.name = data.name
+                this.lastSeen = new Date(data.last_seen * 1000).toLocaleTimeString()
+                this.pm25 = data["pm2.5"]
+                this.temperature = data.temperature
+                this.pressure = data.pressure
+                this.humidity = data.humidity
+            }
+        }
+    }).mount('#app')
+</script>
+
+</html>
